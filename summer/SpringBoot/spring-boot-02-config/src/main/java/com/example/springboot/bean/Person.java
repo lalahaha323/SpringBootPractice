@@ -22,7 +22,7 @@ import java.util.Map;
  * @ConfigurationProperties(prefix = "person")默认从全局配置文件中获取
  */
 
-@PropertySource(value={"classpath:person.properties"})
+//@PropertySource(value={"classpath:person.properties"})
 @Component
 @Validated
 @ConfigurationProperties(prefix = "person")
