@@ -15,6 +15,10 @@
     <description>Demo project for Spring Boot</description>
 
     <properties>
+        <thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
+            <!-- 布局功能的支持程序  thymeleaf3主程序  layout2以上版本 -->
+            <!-- thymeleaf2   layout1-->
+        <thymeleaf-layout-dialect.version>3.0.11</thymeleaf-layout-dialect.version>
         <java.version>1.8</java.version>
     </properties>
 
@@ -35,7 +39,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
     </dependencies>
+
+
 
     <build>
         <plugins>
