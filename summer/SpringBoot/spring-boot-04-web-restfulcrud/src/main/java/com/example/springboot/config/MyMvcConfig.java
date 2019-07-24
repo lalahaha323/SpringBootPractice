@@ -17,6 +17,7 @@ public class MyMvcConfig implements WebMvcConfigurer {
         //浏览器发送 /lala 请求来到success页面
         registry.addViewController("/").setViewName("login");
         registry.addViewController("/index.html").setViewName("login");
+        registry.addViewController("/main.html").setViewName("dashboard");
     }
 
 
@@ -24,4 +25,5 @@ public class MyMvcConfig implements WebMvcConfigurer {
     public LocaleResolver localeResolver() {
         return new MyLocaleResolver();
     }
+
 }
