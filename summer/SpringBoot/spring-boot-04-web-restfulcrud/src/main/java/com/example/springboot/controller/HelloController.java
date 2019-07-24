@@ -12,10 +12,10 @@ import java.util.Map;
 public class HelloController {
 
 
-    @RequestMapping({"/","/index.html"})
-    public String index() {
-        return "index";
-    }
+//    @RequestMapping({"/","/index.html"})
+//    public String index() {
+//        return "index";
+//    }
     @RequestMapping("/hello")
     public String hello() {
         return "Hello World";

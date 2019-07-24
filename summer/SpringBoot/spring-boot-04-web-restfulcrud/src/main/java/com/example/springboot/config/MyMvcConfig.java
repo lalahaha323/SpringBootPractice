@@ -12,6 +12,9 @@ public class MyMvcConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
 //        super.addViewControllers(registry);
         //浏览器发送 /lala 请求来到success页面
-        registry.addViewController("/lala").setViewName("success");
+        registry.addViewController("/").setViewName("index");
+        registry.addViewController("/index.html").setViewName("index");
     }
+
+
 }
