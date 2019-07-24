@@ -23,7 +23,6 @@ public class SpringBoot04WebRestfulcrudApplication {
 
     private static class MyViewResolver implements ViewResolver {
 
-
         @Override
         public View resolveViewName(String s, Locale locale) throws Exception {
             return null;
