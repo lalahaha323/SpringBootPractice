@@ -1,5 +1,6 @@
 package com.example.springboot.config;
 
+import com.example.springboot.component.LoginHandlerInterceptor;
 import com.example.springboot.component.MyLocaleResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,19 @@ public class MyMvcConfig implements WebMvcConfigurer {
         registry.addViewController("/main.html").setViewName("dashboard");
     }
 
+    //注册拦截器
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        //静态资源
+        registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**")
+                                .excludePathPatterns("/index.html","/","/user/login","/static/**","/webjars/**");
+    }
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/");
+    }
     @Bean
     public LocaleResolver localeResolver() {
         return new MyLocaleResolver();

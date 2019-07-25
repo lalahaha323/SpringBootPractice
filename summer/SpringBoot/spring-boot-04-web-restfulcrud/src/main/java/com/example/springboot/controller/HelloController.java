@@ -21,6 +21,11 @@ public class HelloController {
         return "Hello World";
     }
 
+    @RequestMapping("/lala")
+    public String lala() {
+        return "Hello World";
+    }
+
     @RequestMapping("/success")
     public String success(Map<String,Object> map) {
         map.put("hello", "你好");
