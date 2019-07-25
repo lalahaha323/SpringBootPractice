@@ -47,12 +47,12 @@
 	<body>
 		<!--引入抽取的topbar-->
 		<!--模板名:会使用thymeleaf的前后缀配置规则进行解析-->
-		<div th:replace="~{dashboard::topbar}"></div>
+		<div th:replace="commons/bar::topbar"></div>
 
 		<div class="container-fluid">
 			<div class="row">
 				<!--引入侧边栏-->
-                <div th:replace="~{dashboard::#sidebar}"></div>
+                <div th:replace="commons/bar::#sidebar(activeUri='emps')"></div>
 
 				<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
 					<h2>Section title</h2>
