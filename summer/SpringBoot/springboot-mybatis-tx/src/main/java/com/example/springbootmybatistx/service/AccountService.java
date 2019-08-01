@@ -13,10 +13,10 @@ public class AccountService {
     @Autowired
     AccountMapper accountMapper;
 
-    //@Transactional
+    @Transactional
     public void transfer() throws RuntimeException {
-        accountMapper.update(90, 1);
+        accountMapper.update(990, 1);
         int i = 1/0;
-        accountMapper.update(110, 2);
+        accountMapper.update(1010, 2);
     }
 }
