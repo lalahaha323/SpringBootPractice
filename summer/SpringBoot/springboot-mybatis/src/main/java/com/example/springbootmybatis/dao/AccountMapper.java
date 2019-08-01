@@ -2,12 +2,13 @@ package com.example.springbootmybatis.dao;
 
 import com.example.springbootmybatis.enty.Account;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Mapper
-//@Repository
+@Component(value = "AccountMapper")
 public interface AccountMapper {
 
     @Insert("insert into account(name, money) values (#{name}, #{money})")

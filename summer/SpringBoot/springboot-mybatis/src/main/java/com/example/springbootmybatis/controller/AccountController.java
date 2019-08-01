@@ -4,8 +4,10 @@ package com.example.springbootmybatis.controller;
 import com.example.springbootmybatis.enty.Account;
 import com.example.springbootmybatis.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController

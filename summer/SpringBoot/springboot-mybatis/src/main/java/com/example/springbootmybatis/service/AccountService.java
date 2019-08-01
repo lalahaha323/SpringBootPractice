@@ -5,12 +5,14 @@ import com.example.springbootmybatis.enty.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Service
 public class AccountService {
 
-    @Autowired
+//    @Autowired
+    @Resource
     private AccountMapper accountMapper;
 
     public int add(String name, double money) {
