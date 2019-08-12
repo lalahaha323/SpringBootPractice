@@ -56,6 +56,7 @@ public class MallApplication {
 
         LOGGER.info("Sending message...");
         template.convertAndSend("chat", "Hello from Redis!");
+        //RedisTemplate支持Pub/Sub功能
 
         latch.await();
 
