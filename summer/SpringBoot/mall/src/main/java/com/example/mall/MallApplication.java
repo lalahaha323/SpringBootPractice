@@ -1,30 +1,46 @@
 package com.example.mall;
 
+
+
 import com.example.mall.enty.Receiver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.listener.PatternTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-
-import java.util.concurrent.CountDownLatch;
 
 @SpringBootApplication
 public class MallApplication {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MallApplication.class);
+    final static String queueName = "spring-boot";
 
     @Bean
-    RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+    Queue queue() {
+        return new Queue(queueName, false);
+    }
+
+    @Bean
+    TopicExchange exchange() {
+        return new TopicExchange("spring-boot-exchange");
+    }
+
+    @Bean
+    Binding binding(Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(queueName);
+    }
+
+    @Bean
+    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
+                                             MessageListenerAdapter listenerAdapter) {
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(listenerAdapter, new PatternTopic("chat"));
+        container.setQueueNames(queueName);
+        container.setMessageListener(listenerAdapter);
         return container;
     }
 
@@ -33,35 +49,7 @@ public class MallApplication {
         return new MessageListenerAdapter(receiver, "receiveMessage");
     }
 
-    @Bean
-    Receiver receiver(CountDownLatch latch)  {
-        return new Receiver(latch);
+    public static void main(String[] args) {
+        SpringApplication.run(MallApplication.class, args);
     }
-
-    @Bean
-    CountDownLatch latch() {
-         return new CountDownLatch(1);
-    }
-
-    @Bean
-    StringRedisTemplate template(RedisConnectionFactory connectionFactory) {
-        return new StringRedisTemplate(connectionFactory);
-    }
-
-    public static void main(String[] args) throws Exception{
-        ApplicationContext ctx =  SpringApplication.run(MallApplication.class, args);
-
-        StringRedisTemplate template = ctx.getBean(StringRedisTemplate.class);
-        CountDownLatch latch = ctx.getBean(CountDownLatch.class);
-
-        LOGGER.info("Sending message...");
-        template.convertAndSend("chat", "Hello from Redis!");
-        //RedisTemplate支持Pub/Sub功能
-
-        latch.await();
-
-        System.exit(0);
-    }
-
-
 }
