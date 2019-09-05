@@ -17,25 +17,25 @@ public class Result {
     private String msg;
     private Object data;
 
-    public Result() {
-        this.code = Integer.valueOf(0);
-        this.msg = "";
-        this.data = null;
-    }
-    /**
-     * 返回状态码，信息，以及数据
-     */
-    public Result(Integer code, String msg, Object data) {
-        this.code = code;
-        this.msg = msg;
-        this.data = data;
-    }
-    /**
-     * 只返回状态码和信息，用于失败时使用
-     */
-    public Result(Integer code, String msg) {
-        this.code = code;
-        this.msg = msg;
-        this.data = null;
-    }
+//    public Result() {
+//        this.code = Integer.valueOf(0);
+//        this.msg = "";
+//        this.data = null;
+//    }
+//    /**
+//     * 返回状态码，信息，以及数据
+//     */
+//    public Result(Integer code, String msg, Object data) {
+//        this.code = code;
+//        this.msg = msg;
+//        this.data = data;
+//    }
+//    /**
+//     * 只返回状态码和信息，用于失败时使用
+//     */
+//    public Result(Integer code, String msg) {
+//        this.code = code;
+//        this.msg = msg;
+//        this.data = null;
+//    }
 }

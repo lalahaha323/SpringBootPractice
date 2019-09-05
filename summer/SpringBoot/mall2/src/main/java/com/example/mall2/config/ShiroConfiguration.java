@@ -5,6 +5,7 @@ package com.example.mall2.config;
  */
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.authc.LogoutFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -19,6 +20,11 @@ import java.util.Map;
 
 @Configuration
 public class ShiroConfiguration {
+
+    @Bean(name = "lifecycleBeanPostProcessor")
+    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
+        return new LifecycleBeanPostProcessor();
+    }
     /**
      * 密码编码
      * @return
@@ -27,7 +33,7 @@ public class ShiroConfiguration {
     public HashedCredentialsMatcher hashedCredentialsMatcher(){
         HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher();
         credentialsMatcher.setHashAlgorithmName("MD5");
-        credentialsMatcher.setHashIterations(1);
+        credentialsMatcher.setHashIterations(2);
         credentialsMatcher.setStoredCredentialsHexEncoded(true);
         return credentialsMatcher;
     }

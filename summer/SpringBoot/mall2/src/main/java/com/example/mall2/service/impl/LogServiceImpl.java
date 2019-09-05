@@ -6,9 +6,12 @@ import com.example.mall2.pojo.RandomSecurityCode;
 import com.example.mall2.pojo.Result;
 import com.example.mall2.service.LogService;
 import org.apache.commons.mail.SimpleEmail;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,12 +25,10 @@ public class LogServiceImpl implements LogService {
     @Autowired
     private RedisMapper redisMapper;
 
-    private Map map;
-
     @Override
     public Result userLogin(String user_name, String user_password) {
-        map.clear();
-        Result result = null;
+        HashMap map = new HashMap();
+        Result result = new Result();
         Integer count = logMapper.userLogin(user_name, user_password);
         if(count == 0) {
             //登录失败
@@ -47,8 +48,7 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public Result findEmail(String user_email) {
-        map.clear();
-        Result result = null;
+        Result result = new Result();
         Integer count = logMapper.findEmail(user_email);
         if(count == 0) {
             //发送验证码
@@ -84,32 +84,35 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public Result userRegister(Map<Object, Object> map) {
-        map.clear();
-        Result result = null;
+        Result result = new Result();
         //看用户名是否注册过
         String user_name = (String)(map.get("user_name"));
         String user_password = (String)(map.get("user_password"));
         String user_email = (String)(map.get("user_email"));
         String securityCode = redisMapper.getValue("securityCode");
-        if(((String)(map.get(securityCode))) == securityCode) {
-            //验证码正确
-            int count = logMapper.insertRegister(user_name, user_password, user_email);
-            if(count == 0) {
-                //失败
-                result.setCode(41);
-                result.setMsg("用户名被注册");
-                result.setCode(null);
-            } else {
-                //成功
+        String salt = user_name;
+        System.out.println(map.get("securityCode"));
+        //验证码正确
+        if(securityCode.equals(map.get("securityCode"))) {
+            //看用户名是否注册过
+            if(logMapper.findName(user_name) == 0) {
+                //没有注册过
+                Md5Hash md5Hash = new Md5Hash(user_password, salt, 2);
+                logMapper.insertRegister(user_name, md5Hash, user_email);
                 result.setCode(21);
                 result.setMsg("注册成功");
+                result.setData(null);
+            } else {
+                //注册过
+                result.setCode(41);
+                result.setMsg("用户名被注册");
                 result.setData(null);
             }
         } else {
             //验证码错误，注册失败
             result.setCode(42);
             result.setMsg("验证码错误");
-            result.setCode(null);
+            result.setData(null);
         }
         return result;
     }
