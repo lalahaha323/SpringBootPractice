@@ -15,6 +15,10 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author lala
@@ -22,6 +26,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class MyRealm extends AuthorizingRealm {
+
+    //用户登录次数计数 redisKey前缀
+    private String SHIRO_LOGIN_COUNT = "shiro_login_count_";
+
+    //用户登录是否被锁定 一小时 redisKey前缀
+    private String SHIRO_IS_LOCK = "shiro_is_lock_";
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private LogMapper logMapper;
@@ -65,6 +78,11 @@ public class MyRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
+        /**
+         * 设置key的值为value
+         *  如果key不存在，添加key保存值为value
+         *  如果key存在，对value进行覆盖
+         */
         //用户输入的用户名和密码
         String user_name = token.getPrincipal().toString();
         String user_password = new String((char[]) token.getCredentials());
@@ -72,8 +90,20 @@ public class MyRealm extends AuthorizingRealm {
         Md5Hash md5Hash = new Md5Hash(user_password, salt, 2);
         //数据库找
         User user = logMapper.getByUserName(user_name);
+        //访问一次，计数一次
+        ValueOperations<String, String> opsForValue = stringRedisTemplate.opsForValue();
+        opsForValue.increment(SHIRO_LOGIN_COUNT+user_name, 1);
+        if(Integer.parseInt(opsForValue.get(SHIRO_LOGIN_COUNT+user_name)) >= 5) {
+            opsForValue.set(SHIRO_IS_LOCK+user_name, "LOCK");
+            stringRedisTemplate.expire(SHIRO_IS_LOCK+user_name, 1, TimeUnit.HOURS);
+        }
+        if ("LOCK".equals(opsForValue.get(SHIRO_IS_LOCK+user_name))){
+            System.out.println("禁止");
+            throw new DisabledAccountException("由于密码输入错误次数大于5次，帐号已经禁止登录！");
+        }
         if(user != null){
             if((md5Hash.toString()).equals(user.getPassword())) {
+                opsForValue.set(SHIRO_LOGIN_COUNT+user_name, "0");
                 SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user.getName(), user.getPassword(), getName());
                 authenticationInfo.setCredentialsSalt(ByteSource.Util.bytes(user_name));
                 return authenticationInfo;
