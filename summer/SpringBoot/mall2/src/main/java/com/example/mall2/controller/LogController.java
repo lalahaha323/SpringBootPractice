@@ -60,6 +60,7 @@ public class LogController {
         result.setData(map);
         return result;
     }
+
     //发送验证码
     @PostMapping("/sendSecurityCode")
     public Result getSecurityCode(@RequestBody HashMap<Object, Object> map) {

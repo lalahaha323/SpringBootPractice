@@ -54,6 +54,7 @@ public class MyRealm extends AuthorizingRealm {
         return null;
     }
 
+
     /**
      * 用户认证
      * 调用了subject.login()方法就会进入到这个方法进行具体登录验证
