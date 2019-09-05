@@ -31,6 +31,7 @@ public class LogController {
 
     @Autowired
     private LogService logService;
+
     //登录
     @PostMapping("/login")
     public Result userLogin(@RequestBody HashMap<Object, Object> map) {

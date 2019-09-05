@@ -25,6 +25,7 @@ public class ShiroConfiguration {
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
         return new LifecycleBeanPostProcessor();
     }
+
     /**
      * 密码编码
      * @return

@@ -62,6 +62,7 @@ public class MyRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+
         //用户输入的用户名和密码
         String user_name = token.getPrincipal().toString();
         String user_password = new String((char[]) token.getCredentials());
