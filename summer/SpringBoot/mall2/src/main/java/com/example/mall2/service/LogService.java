@@ -29,7 +29,7 @@ public interface LogService {
 //    public User getByUserName(String userName);
 //
 //    public List<User_Role> getRoles(Integer id);
-    public Result userLogin(String user_name, String user_password);
+
     public Result findEmail(String user_email);
     public Result userRegister(Map<Object, Object> map);
 }

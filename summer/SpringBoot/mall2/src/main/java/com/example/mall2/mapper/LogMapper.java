@@ -26,6 +26,6 @@ public interface LogMapper {
     public ArrayList<Role_Permission> getPermissions(@Param("role_id") Integer role_id);
     public Permission getById(@Param("per_id") Integer per_id);
     public int insertRegister(@Param("user_name") String user_name,
-                              @Param("user_password") Md5Hash user_password,
+                              @Param("user_password") String user_password,
                               @Param("user_email") String user_email);
 }

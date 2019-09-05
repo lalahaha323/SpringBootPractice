@@ -26,27 +26,6 @@ public class LogServiceImpl implements LogService {
     private RedisMapper redisMapper;
 
     @Override
-    public Result userLogin(String user_name, String user_password) {
-        HashMap map = new HashMap();
-        Result result = new Result();
-        Integer count = logMapper.userLogin(user_name, user_password);
-        if(count == 0) {
-            //登录失败
-            result.setCode(43);
-            result.setMsg("登录失败");
-            result.setData(null);
-        } else {
-            //登录成功
-            result.setCode(22);
-            result.setMsg("登陆成功");
-            map.put("user_name", user_name);
-            map.put("user_password", user_password);
-            result.setData(map);
-        }
-        return result;
-    }
-
-    @Override
     public Result findEmail(String user_email) {
         Result result = new Result();
         Integer count = logMapper.findEmail(user_email);
@@ -91,14 +70,13 @@ public class LogServiceImpl implements LogService {
         String user_email = (String)(map.get("user_email"));
         String securityCode = redisMapper.getValue("securityCode");
         String salt = user_name;
-        System.out.println(map.get("securityCode"));
         //验证码正确
         if(securityCode.equals(map.get("securityCode"))) {
             //看用户名是否注册过
             if(logMapper.findName(user_name) == 0) {
                 //没有注册过
                 Md5Hash md5Hash = new Md5Hash(user_password, salt, 2);
-                logMapper.insertRegister(user_name, md5Hash, user_email);
+                logMapper.insertRegister(user_name, md5Hash.toString(), user_email);
                 result.setCode(21);
                 result.setMsg("注册成功");
                 result.setData(null);

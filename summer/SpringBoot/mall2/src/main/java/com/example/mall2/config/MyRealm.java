@@ -39,18 +39,19 @@ public class MyRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        //添加角色和权限
-        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        //获取用户名，此用户名实在登录接口里new UsernamePasswordToken()时设置的
-        String username = (String)principalCollection.getPrimaryPrincipal();
-        User user = logMapper.getByUserName(username);
-//        for(User_Role user_role : logMapper.getRoles(user.getId())){
-//            for(Role_Permission role_permission: logMapper.getPermissions(user_role.getRoleId())){
-//                Permission permission = logMapper.getById(role_permission.getPermissionId());
-//                authorizationInfo.addStringPermission(permission.getName());
-//            }
-//        }
-        return authorizationInfo;
+//        //添加角色和权限
+//        SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
+//        //获取用户名，此用户名实在登录接口里new UsernamePasswordToken()时设置的
+//        String username = (String)principalCollection.getPrimaryPrincipal();
+//        User user = logMapper.getByUserName(username);
+////        for(User_Role user_role : logMapper.getRoles(user.getId())){
+////            for(Role_Permission role_permission: logMapper.getPermissions(user_role.getRoleId())){
+////                Permission permission = logMapper.getById(role_permission.getPermissionId());
+////                authorizationInfo.addStringPermission(permission.getName());
+////            }
+////        }
+//        return authorizationInfo;
+        return null;
     }
 
     /**
@@ -71,18 +72,16 @@ public class MyRealm extends AuthorizingRealm {
         //数据库找
         User user = logMapper.getByUserName(user_name);
         if(user != null){
-            if(md5Hash.equals(user_password)) {
-                SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user_name, user_password, getName());
+            if((md5Hash.toString()).equals(user.getPassword())) {
+                SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user.getName(), user.getPassword(), getName());
                 authenticationInfo.setCredentialsSalt(ByteSource.Util.bytes(user_name));
                 return authenticationInfo;
             } else {
-                System.out.println("密码错误");
-                throw new AuthenticationException("密码错误");
+                return null;
             }
 
         }else{
-            System.out.println("用户名错误");
-            throw new AuthenticationException("用户名错误");
+            return null;
         }
     }
 
