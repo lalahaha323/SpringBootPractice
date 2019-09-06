@@ -8,7 +8,6 @@ import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.web.filter.authc.LogoutFilter;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
@@ -16,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -49,15 +47,6 @@ public class ShiroConfiguration {
     @DependsOn("lifecycleBeanPostProcessor")
     public MyRealm myRealm(){
         MyRealm realm = new MyRealm();
-//        realm.setCachingEnabled(true);
-//        //启用身份验证缓存，即缓存AuthenticationInfo信息，默认false
-//        realm.setAuthenticationCachingEnabled(true);
-//        //缓存AuthenticationInfo信息的缓存名称 在ehcache-shiro.xml中有对应缓存的配置
-//        realm.setAuthenticationCacheName("authenticationCache");
-//        //启用授权缓存，即缓存AuthorizationInfo信息，默认false
-//        realm.setAuthorizationCachingEnabled(true);
-//        //缓存AuthorizationInfo信息的缓存名称  在ehcache-shiro.xml中有对应缓存的配置
-//        realm.setAuthorizationCacheName("authorizationCache");
         //配置自定义密码比较器
         realm.setCredentialsMatcher(hashedCredentialsMatcher());
         return realm;
@@ -80,48 +69,31 @@ public class ShiroConfiguration {
     }
 
 
+    /**
+     * authc：该过滤器下的页面必须验证后才能访问，他是Shiro内置的一个拦截器
+     * anno：它对应的过滤器里面是空的，什么都没做，可以理解为不拦截
+     * authc：所有url都必须认证通过才可以访问
+     * anno：所有url都可以匿名访问
+     */
     @Bean(name = "shiroFilter")
     public ShiroFilterFactoryBean shiroFilterFactoryBean(){
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager());
+        //拦截器。匹配原则是最上面的优先匹配
         Map<String, String> filterChainMap = new LinkedHashMap<>();
-        //配置记住我或认证通过可以访问的地址
-        filterChainMap.put("/index", "user");
-        filterChainMap.put("/", "user");
-
-        /**
-         * authc：该过滤器下的页面必须验证后才能访问，他是Shiro内置的一个拦截器
-         * anno：它对应的过滤器里面是空的，什么都没做，可以理解为不拦截
-         * authc：所有url都必须认证通过才可以访问
-         * anno：所有url都可以匿名访问
-         */
-        //输入http://localhost:8080/myEra/tUser会跳到登录页面
-//        filterChainMap.put("/tUser", "authc");
-
-        filterChainMap.put("/permission/userInsert", "anon");
-        filterChainMap.put("/error", "anon");
-        filterChainMap.put("/tUser/insert","anon");
-        filterChainMap.put("/gif/getGifCode","anon");
-        filterChainMap.put("/**", "authc");
-//        Map<String, Filter> filters = new LinkedHashMap<>();
-//        LogoutFilter logoutFilter = new LogoutFilter();
-//        logoutFilter.setRedirectUrl("/login");
-//        shiroFilterFactoryBean.setFilters(filters);
-//
-//        Map<String, String> filterChainDefinitionManger = new LinkedHashMap<>();
-//        //logout直接加载logout
-//        filterChainDefinitionManger.put("/logout", "logout");
-//        //访问index下url需要authentication
-//        filterChainDefinitionManger.put("/index", "authc, perms[read]");
-//        filterChainDefinitionManger.put("/admin", "authc, perms[write]");
-//        filterChainDefinitionManger.put("/**", "anon");
-//        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionManger);
-//
-//        shiroFilterFactoryBean.setSuccessUrl("/index");
+        //配置不会被拦截的链接
+//        filterChainMap.put("/login", "anon");
+//        filterChainMap.put("/register", "anon");
+//        //配置退出过滤器，其中的具体的退出代码Shiro已经替我们实现了
+//        filterChainMap.put("/doLogout", "logout");
+//        //剩余请求需要身份认证
+//        filterChainMap.put("/**", "authc");
+//        //如果不设置，默认会自动寻找web工程根目录下的"/login.jsp"页面
 //        shiroFilterFactoryBean.setLoginUrl("/login");
-//        shiroFilterFactoryBean.setUnauthorizedUrl("/403");
+//        //未授权界面
+////        shiroFilterFactoryBean.setUnauthorizedUrl("/403");
+//        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainMap);
         return shiroFilterFactoryBean;
-
     }
 
     /**

@@ -6,11 +6,8 @@ package com.example.mall2.controller;
 
 import com.example.mall2.pojo.Result;
 import com.example.mall2.service.LogService;
-import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 登录注册
@@ -39,7 +35,6 @@ public class LogController {
         Result result = new Result();
         String user_name = (String)(map.get("user_name"));
         String user_password = (String)(map.get("user_password"));
-
         //subject代表当前用户
         Subject subject = SecurityUtils.getSubject();
         //用请求的用户名和密码创建UsernamePasswordToken(此类来自shiro包下)
