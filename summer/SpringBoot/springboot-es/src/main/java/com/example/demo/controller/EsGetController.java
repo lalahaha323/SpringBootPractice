@@ -17,7 +17,7 @@ import java.util.Map;
  */
 
 @RestController
-public class EsController {
+public class EsGetController {
     @GetMapping("/get/book")
     public void getBook() {
         RestHighLevelClient client = EsUtil.create();
